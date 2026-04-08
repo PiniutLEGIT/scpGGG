@@ -1,0 +1,390 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Lua Class Generator</title>
+		<style>
+			:root {
+				--bg: #0f1115;
+				--panel: #151922;
+				--text: #e6e6e6;
+				--muted: #9aa3b2;
+				--accent: #4aa3ff;
+				--input: #0c0f14;
+				--border: #2a3140;
+			}
+
+			body.light {
+				--bg: #ffffff;
+				--panel: #f4f4f4;
+				--text: #000000;
+				--muted: #555;
+				--accent: #0066cc;
+				--input: #ffffff;
+				--border: #ccc;
+			}
+
+			body {
+				font-family: Arial;
+				padding: 20px;
+				background: var(--bg);
+				color: var(--text);
+			}
+			input,
+			select,
+			textarea {
+				margin: 4px 0;
+				background: var(--input);
+				color: var(--text);
+				border: 1px solid var(--border);
+				padding: 4px;
+			}
+			button {
+				background: var(--accent);
+				border: none;
+				color: white;
+				padding: 6px 10px;
+				cursor: pointer;
+			}
+			pre {
+				background: var(--panel);
+				padding: 10px;
+				border: 1px solid var(--border);
+			}
+			.section {
+				padding: 10px;
+				background: var(--panel);
+				border: 1px solid var(--border);
+				margin-bottom: 10px;
+			}
+			.error {
+				color: #ff6b6b;
+			}
+		</style>
+	</head>
+	<body>
+		<h2>Class Generator</h2>
+		<button onclick="toggleTheme()">Toggle Light/Dark</button><br /><br />
+
+		<div id="errors" class="error"></div>
+
+		<label>Type:</label>
+		<select id="classType">
+			<option value="normal">RegisterClass</option>
+			<option value="support">RegisterSupportClass</option></select
+		><br /><br />
+
+		<div class="section">
+			<label>Name:</label><input id="name" /><br />
+
+			<label>Group:</label>
+			<input id="group" list="group_list" />
+			<datalist id="group_list"></datalist><br />
+
+			<label>Model:</label><input id="model" /><br />
+		</div>
+
+		<div class="section">
+			<h3>Data</h3>
+
+			<label>team:</label>
+			<input id="team" list="team_list" />
+			<datalist id="team_list"></datalist><br />
+
+			<label>weapons:</label><input id="weapons" placeholder="{}" /><br />
+			<label>ammo:</label><input id="ammo" placeholder="{}" /><br />
+
+			<label>chip:</label>
+			<input id="chip" list="chip_list" />
+			<datalist id="chip_list"></datalist><br />
+
+			<label>omnitool:</label
+			><input type="checkbox" id="omnitool" /><br />
+			<label>health:</label
+			><input type="number" id="health" value="100" /><br />
+			<label>walk_speed:</label
+			><input type="number" id="walk_speed" value="100" /><br />
+			<label>run_speed:</label
+			><input type="number" id="run_speed" value="225" /><br />
+			<label>sanity:</label
+			><input type="number" id="sanity" value="100" /><br />
+			<label>vest:</label><input id="vest" placeholder="nil" /><br />
+			<label>max:</label><input type="number" id="max" value="0" /><br />
+			<label>tier:</label
+			><input type="number" id="tier" value="0" /><br />
+		</div>
+
+		<label
+			><input
+				type="checkbox"
+				id="optional_master"
+				onclick="toggleOptionalSection()"
+			/>
+			Enable Optional Settings</label
+		>
+
+		<div id="optional_section" style="display: none">
+			<div class="section">
+				<h3>Optional</h3>
+
+				<label
+					><input
+						type="checkbox"
+						id="stamina_toggle"
+						onclick="toggle('stamina')"
+					/>
+					stamina</label
+				>
+				<input id="stamina" style="display: none" /><br />
+
+				<label
+					><input
+						type="checkbox"
+						id="max_sanity_toggle"
+						onclick="toggle('max_sanity')"
+					/>
+					max_sanity</label
+				>
+				<input id="max_sanity" style="display: none" /><br />
+
+				<label><input type="checkbox" id="hide_toggle" /> hide</label
+				><br />
+
+				<label
+					><input
+						type="checkbox"
+						id="select_group_toggle"
+						onclick="toggle('select_group')"
+					/>
+					select_group</label
+				>
+				<input id="select_group" style="display: none" /><br />
+
+				<label
+					><input
+						type="checkbox"
+						id="weight_toggle"
+						onclick="toggle('weight')"
+					/>
+					weight</label
+				>
+				<input id="weight" style="display: none" /><br />
+
+				<label
+					><input
+						type="checkbox"
+						id="persona_toggle"
+						onclick="togglePersona()"
+					/>
+					persona</label
+				><br />
+				<div
+					id="persona_fields"
+					style="display: none; margin-left: 15px"
+				>
+					class: <input id="persona_class" /> team:
+					<input id="persona_team" />
+				</div>
+
+				<label
+					><input
+						type="checkbox"
+						id="override_toggle"
+						onclick="toggle('override_body')"
+					/>
+					override</label
+				><br />
+				<textarea
+					id="override_body"
+					style="display: none; width: 300px; height: 60px"
+				></textarea
+				><br />
+
+				<label
+					><input
+						type="checkbox"
+						id="spawn_toggle"
+						onclick="toggle('spawn')"
+					/>
+					spawn</label
+				>
+				<input id="spawn" style="display: none" /><br />
+
+				<label
+					><input
+						type="checkbox"
+						id="select_override_toggle"
+						onclick="toggle('select_override_body')"
+					/>
+					select_override</label
+				><br />
+				<textarea
+					id="select_override_body"
+					style="display: none; width: 300px; height: 60px"
+				></textarea
+				><br />
+
+				<label
+					><input
+						type="checkbox"
+						id="callback_toggle"
+						onclick="toggle('callback_body')"
+					/>
+					callback</label
+				><br />
+				<textarea
+					id="callback_body"
+					style="display: none; width: 300px; height: 60px"
+				></textarea
+				><br />
+			</div>
+		</div>
+
+		<br />
+		<button onclick="generate()">Generate</button>
+
+		<h3>Output</h3>
+		<pre id="output"></pre>
+
+		<script>
+			function toggleTheme() {
+				document.body.classList.toggle("light");
+			}
+			function toggleOptionalSection() {
+				let el = document.getElementById("optional_section");
+				el.style.display =
+					el.style.display === "none" ? "block" : "none";
+			}
+			function toggle(id) {
+				let el = document.getElementById(id);
+				el.style.display =
+					el.style.display === "none" ? "inline-block" : "none";
+			}
+			function togglePersona() {
+				let el = document.getElementById("persona_fields");
+				el.style.display =
+					el.style.display === "none" ? "block" : "none";
+			}
+
+			// Load preset lists
+			async function loadList(file, datalistId) {
+				try {
+					let res = await fetch(file);
+					if (!res.ok) throw new Error();
+					let text = await res.text();
+					let items = text
+						.split(/\r?\n/)
+						.filter((x) => x.trim() !== "");
+
+					let datalist = document.getElementById(datalistId);
+					items.forEach((item) => {
+						let opt = document.createElement("option");
+						opt.value = item;
+						datalist.appendChild(opt);
+					});
+				} catch {
+					document.getElementById("errors").innerText +=
+						`Missing ${file}\n`;
+				}
+			}
+
+			// Add new values dynamically to list (runtime only)
+			function attachAutoAdd(inputId, datalistId) {
+				let input = document.getElementById(inputId);
+				let datalist = document.getElementById(datalistId);
+
+				input.addEventListener("change", () => {
+					let val = input.value.trim();
+					if (!val) return;
+
+					let exists = Array.from(datalist.options).some(
+						(o) => o.value === val,
+					);
+					if (!exists) {
+						let opt = document.createElement("option");
+						opt.value = val;
+						datalist.appendChild(opt);
+					}
+				});
+			}
+
+			loadList("group.txt", "group_list");
+			loadList("team.txt", "team_list");
+			loadList("chip.txt", "chip_list");
+
+			attachAutoAdd("group", "group_list");
+			attachAutoAdd("team", "team_list");
+			attachAutoAdd("chip", "chip_list");
+
+			function buildData() {
+				let lines = [];
+				function add(key, value) {
+					lines.push(`\t\t${key} = ${value},`);
+				}
+
+				add("team", team.value);
+				add("weapons", weapons.value.trim() || "{}");
+				add("ammo", ammo.value.trim() || "{}");
+				add("chip", `"${chip.value || ""}"`);
+				add("omnitool", omnitool.checked ? "true" : "false");
+				add("health", health.value);
+				add("walk_speed", walk_speed.value);
+				add("run_speed", run_speed.value);
+				add("sanity", sanity.value);
+				add("vest", vest.value.trim() || "nil");
+				add("max", max.value);
+				add("tier", tier.value);
+
+				if (optional_master.checked) {
+					if (stamina_toggle.checked) add("stamina", stamina.value);
+					if (max_sanity_toggle.checked)
+						add("max_sanity", max_sanity.value);
+					if (hide_toggle.checked) add("hide", "true");
+					if (select_group_toggle.checked)
+						add("select_group", `"${select_group.value}"`);
+					if (weight_toggle.checked) add("weight", weight.value);
+
+					if (persona_toggle.checked)
+						lines.push(
+							`\t\tpersona = { class = ${persona_class.value}, team = ${persona_team.value} },`,
+						);
+
+					if (override_toggle.checked)
+						lines.push(
+							`\t\toverride = function(ply)\n\t\t\t${override_body.value}\n\t\tend,`,
+						);
+
+					if (spawn_toggle.checked && spawn.value.trim() !== "")
+						add("spawn", spawn.value);
+
+					if (select_override_toggle.checked)
+						lines.push(
+							`\t\tselect_override = function(cur, total)\n\t\t\t${select_override_body.value}\n\t\tend,`,
+						);
+
+					if (callback_toggle.checked)
+						lines.push(
+							`\t\tcallback = function(ply, class)\n\t\t\t${callback_body.value}\n\t\tend,`,
+						);
+				}
+
+				return "{\n" + lines.join("\n") + "\n\t}";
+			}
+
+			function generate() {
+				let type = classType.value;
+				let name = `"${name.value}"`;
+				let groupVal = `"${group.value}"`;
+				let model = model.value;
+				let data = buildData();
+
+				let result =
+					type === "support"
+						? `RegisterSupportClass( ${name}, ${groupVal}, ${model}, ${data} )`
+						: `RegisterClass( ${name}, ${groupVal}, ${model}, ${data} )`;
+
+				output.innerText = result;
+			}
+		</script>
+	</body>
+</html>
