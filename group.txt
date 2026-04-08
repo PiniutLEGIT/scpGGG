@@ -1,4 +1,12 @@
-grupa1
-grupa2
-grupa3
-grupa4
+classd
+sci
+guard
+mtf_ntf
+mtf_alpha
+ci
+goc
+sh
+b7
+rrt
+alpha9
+bog
