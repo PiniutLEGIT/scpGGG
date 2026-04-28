@@ -108,7 +108,11 @@
 			><input type="number" id="run_speed" value="225" /><br />
 			<label>sanity:</label
 			><input type="number" id="sanity" value="100" /><br />
-			<label>vest:</label><input id="vest" placeholder="nil" /><br />
+			
+			<label>vest:</label>
+			<input id="vest" placeholder="nil" list="vest_list" />
+			<datalist id="vest_list"></datalist><br />
+			
 			<label>max:</label><input type="number" id="max" value="0" /><br />
 			<label>tier:</label
 			><input type="number" id="tier" value="0" /><br />
@@ -289,6 +293,7 @@
 			loadList("group.txt", "group_list");
 			loadList("team.txt", "team_list");
 			loadList("chip.txt", "chip_list");
+			loadList("vest.txt", "vest_list");
 
 			function buildData() {
 				let lines = [];
