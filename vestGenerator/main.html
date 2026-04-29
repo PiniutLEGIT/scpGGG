@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Vest Generator</title>
+
+<style>
+:root {
+  --bg:#0f1115;
+  --panel:#151922;
+  --text:#e6e6e6;
+  --accent:#4aa3ff;
+  --border:#2a3140;
+}
+body.light {
+  --bg:#fff;
+  --panel:#f4f4f4;
+  --text:#000;
+  --accent:#0066cc;
+  --border:#ccc;
+}
+body {
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial;
+  padding:20px;
+}
+.section {
+  background:var(--panel);
+  border:1px solid var(--border);
+  padding:10px;
+  margin-bottom:10px;
+}
+input, select {
+  background:var(--panel);
+  color:var(--text);
+  border:1px solid var(--border);
+  padding:5px;
+  margin:2px;
+}
+button {
+  background:var(--accent);
+  border:none;
+  color:white;
+  padding:6px 10px;
+  cursor:pointer;
+}
+.row { margin-bottom:6px; }
+#output {
+  white-space:pre-wrap;
+  background:#000;
+  padding:10px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Vest Generator</h2>
+<button onclick="toggleTheme()">Toggle Light/Dark</button>
+
+<div class="section">
+<div class="row">Name: <input id="name"></div>
+<div class="row">Model: <input id="model"></div>
+<div class="row">Durability: <input id="durability" type="number"></div>
+<div class="row">Mobility: <input id="mobility" type="number" step="0.01" value="0.9"></div>
+<div class="row">Weight: <input id="weight" type="number" value="2"></div>
+
+<div class="row">
+Random Vest:
+<select id="randomvest">
+<option value="true">true</option>
+<option value="false">false</option>
+</select>
+</div>
+
+<div class="row">
+Callback: <input id="callback" placeholder="optional">
+</div>
+</div>
+
+<div class="section">
+<b>Damage</b>
+<div id="damageList"></div>
+<button onclick="addDamage()">+ Add Damage</button>
+</div>
+
+<div class="section">
+<label>
+<input type="checkbox" id="bodygroupsToggle"> Bodygroups
+</label>
+<div id="bodygroupsSection" style="display:none;">
+Key: <input id="bgKey">
+Value: <input id="bgValue">
+</div>
+</div>
+
+<div class="section">
+<button onclick="generate()">Generate</button>
+</div>
+
+<div class="section">
+<pre id="output"></pre>
+</div>
+
+<script>
+function toggleTheme(){
+  document.body.classList.toggle("light");
+}
+
+document.getElementById("bodygroupsToggle").onchange = e=>{
+  document.getElementById("bodygroupsSection").style.display =
+    e.target.checked ? "block" : "none";
+};
+
+function addDamage(){
+  const div = document.createElement("div");
+  div.className = "row";
+  div.innerHTML = `
+    Type: <input placeholder="DMG_BULLET">
+    Value: <input type="number" step="0.1">
+  `;
+  document.getElementById("damageList").appendChild(div);
+}
+
+function generate(){
+  const name = document.getElementById("name").value;
+  const model = document.getElementById("model").value;
+  const durability = document.getElementById("durability").value;
+  const mobility = document.getElementById("mobility").value;
+  const weight = document.getElementById("weight").value;
+  const randomvest = document.getElementById("randomvest").value;
+  const callback = document.getElementById("callback").value;
+
+  if(!name || !model || !durability){
+    alert("Missing required fields");
+    return;
+  }
+
+  // damage
+  let damageStr = "";
+  const dmgRows = document.querySelectorAll("#damageList .row");
+  dmgRows.forEach(row=>{
+    const inputs = row.querySelectorAll("input");
+    const type = inputs[0].value;
+    const val = inputs[1].value;
+    if(type && val){
+      damageStr += `[${type}] = ${val}, `;
+    }
+  });
+
+  if(damageStr.endsWith(", "))
+    damageStr = damageStr.slice(0,-2);
+
+  // bodygroups
+  let bodygroups = "";
+  if(document.getElementById("bodygroupsToggle").checked){
+    const key = document.getElementById("bgKey").value;
+    const val = document.getElementById("bgValue").value;
+    if(key && val){
+      bodygroups = `, bodygroups = { ${key} = ${val} }`;
+    }
+  }
+
+  const callbackStr = callback ? `, ${callback}` : "";
+
+  const output =
+`VEST.Register( "${name}", {
+    model = ${model},
+    damage = { ${damageStr} },
+    durability = ${durability},
+    mobility = ${mobility},
+    weight = ${weight}${bodygroups}
+}, ${randomvest}${callbackStr} )`;
+
+  document.getElementById("output").textContent = output;
+}
+</script>
+
+</body>
+</html>
