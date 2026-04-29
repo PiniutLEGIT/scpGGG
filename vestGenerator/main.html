@@ -36,18 +36,25 @@ button { background:var(--accent); border:none; color:white; padding:6px 10px; c
 
 <body>
 
+<p>
+	<a href="https://github.com/PiniutLEGIT/scpGGG">Menu główne</a>
+	 | 
+	<a href="https://piniutlegit.github.io/scpGGG/chipUpgrade/main.html">Ulepszanie czipów</a>
+   | 
+  <a href="https://piniutlegit.github.io/scpGGG/classAddition/main.html">Generator klas</a>
+</p>
 <h2>Vest Generator</h2>
 <button onclick="toggleTheme()">Toggle Light/Dark</button>
 
 <div class="section">
 <div class="row">Name: <input id="name"></div>
 <div class="row">Model: <input id="model"></div>
-<div class="row">Durability: <input id="durability"></div>
-<div class="row">Mobility: <input id="mobility"></div>
-<div class="row">Weight: <input id="weight"></div>
+<div class="row">Durability: <input id="durability" placeholder="default: 225"></div>
+<div class="row">Mobility: <input id="mobility" placeholder="0.2 - 1.9"></div>
+<div class="row">Weight: <input id="weight" placeholder="0 - 10"></div>
 
 <div class="row">
-<label><input type="checkbox" id="randomvest"> Random Vest</label>
+<label>Random Vest <input type="checkbox" id="randomvest"></label>
 </div>
 
 <div class="row">
